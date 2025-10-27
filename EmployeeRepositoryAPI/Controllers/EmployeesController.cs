@@ -26,7 +26,7 @@ public class EmployeesController : ControllerBase
 
     // GET: api/Employees/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Employee>> GetEmployee(int id)
+    public async Task<ActionResult<Employee>> GetEmployee([FromBody] int id)
     {
         var employee = await _employee.GetById(id);
 
@@ -41,7 +41,7 @@ public class EmployeesController : ControllerBase
     // PUT: api/Employees/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutEmployee(int id)
+    public async Task<IActionResult> PutEmployee([FromBody] int id)
     {
         var existingEmployee = await _employee.GetById(id);
         if (existingEmployee == null)
@@ -57,7 +57,7 @@ public class EmployeesController : ControllerBase
     // POST: api/Employees
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+    public async Task<ActionResult<Employee>> PostEmployee([FromForm] Employee employee)
     {
         _employee.Insert(employee);
         await Task.Run(() => _employee.Save());
@@ -66,7 +66,7 @@ public class EmployeesController : ControllerBase
 
     // DELETE: api/Employees/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEmployee(int id)
+    public async Task<IActionResult> DeleteEmployee([FromBody] int id)
     {
         _employee.Delete(id);
         await Task.Run(() => _employee.Save());
