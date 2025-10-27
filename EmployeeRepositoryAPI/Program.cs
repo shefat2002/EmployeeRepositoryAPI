@@ -1,5 +1,6 @@
 using EmployeeRepositoryAPI.Models;
-using Microsoft.AspNetCore.Builder;
+using EmployeeRepositoryAPI.Repositories;
+using EmployeeRepositoryAPI.Repositories.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<EmployeeDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//repository
+builder.Services.AddScoped<IEmployee, EmployeeRepository>();
 
 //CORS
 builder.Services.AddCors(options =>

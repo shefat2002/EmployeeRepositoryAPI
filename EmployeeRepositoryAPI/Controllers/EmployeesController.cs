@@ -35,38 +35,23 @@ public class EmployeesController : ControllerBase
             return NotFound();
         }
 
-        return employee;
+        return Ok(employee);
     }
 
     // PUT: api/Employees/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutEmployee(int id, Employee employee)
+    public async Task<IActionResult> PutEmployee(int id)
     {
-        if (id != employee.Id)
+        var existingEmployee = await _employee.GetById(id);
+        if (existingEmployee == null)
         {
-            return BadRequest();
+            return NotFound();
         }
-
-        _context.Entry(employee).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!EmployeeExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        _employee.Update(existingEmployee);
+        await Task.Run(() => _employee.Save());
         return NoContent();
+
     }
 
     // POST: api/Employees
@@ -74,9 +59,8 @@ public class EmployeesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
     {
-        _context.Employees.Add(employee);
-        await _context.SaveChangesAsync();
-
+        _employee.Insert(employee);
+        await Task.Run(() => _employee.Save());
         return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
     }
 
@@ -84,20 +68,9 @@ public class EmployeesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEmployee(int id)
     {
-        var employee = await _context.Employees.FindAsync(id);
-        if (employee == null)
-        {
-            return NotFound();
-        }
-
-        _context.Employees.Remove(employee);
-        await _context.SaveChangesAsync();
-
+        _employee.Delete(id);
+        await Task.Run(() => _employee.Save());
         return NoContent();
     }
 
-    private bool EmployeeExists(int id)
-    {
-        return _context.Employees.Any(e => e.Id == id);
-    }
 }
